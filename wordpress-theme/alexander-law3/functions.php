@@ -675,53 +675,95 @@ function alexander_law_fetch_rss_feed($feed_url, $limit = 5) {
 }
 
 /**
- * Add Schema.org Structured Data
+ * Add Schema.org Structured Data (LegalService + real GBP reviews when available)
  */
 function alexander_law_schema_data() {
-    if (is_front_page()) {
-        $schema = array(
-            '@context' => 'https://schema.org',
-            '@type' => 'LegalService',
-            'name' => get_bloginfo('name'),
-            'description' => get_bloginfo('description'),
-            'url' => home_url('/'),
-            'telephone' => get_theme_mod('phone_number', '(804) 355-0016'),
-            'address' => array(
-                '@type' => 'PostalAddress',
-                'streetAddress' => '1000 Greenway Lane',
-                'addressLocality' => 'Richmond',
-                'addressRegion' => 'VA',
-                'postalCode' => '23226',
-                'addressCountry' => 'US',
-            ),
-            'geo' => array(
-                '@type' => 'GeoCoordinates',
-                'latitude' => get_theme_mod('office_lat', '37.5760265'),
-                'longitude' => get_theme_mod('office_lng', '-77.5054805'),
-            ),
-            'openingHoursSpecification' => array(
-                '@type' => 'OpeningHoursSpecification',
-                'dayOfWeek' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'),
-                'opens' => '08:00',
-                'closes' => '18:00',
-            ),
-            'priceRange' => '$$',
-            'areaServed' => array(
-                'Richmond, VA',
-                'Henrico County, VA',
-                'Chesterfield County, VA',
-                'Hanover County, VA',
-            ),
-            'aggregateRating' => array(
-                '@type' => 'AggregateRating',
-                'ratingValue' => '10',
-                'bestRating' => '10',
-                'ratingCount' => '50',
-            ),
-        );
-
-        echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>';
+    if (!is_front_page()) {
+        return;
     }
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'LegalService',
+        '@id' => home_url('/#legalservice'),
+        'name' => get_bloginfo('name'),
+        'description' => get_bloginfo('description'),
+        'url' => home_url('/'),
+        'telephone' => get_theme_mod('phone_number', '(804) 355-0016'),
+        'image' => get_option('alexander_law_default_og_image') ?: '',
+        'address' => array(
+            '@type' => 'PostalAddress',
+            'streetAddress' => '1000 Greenway Lane',
+            'addressLocality' => 'Richmond',
+            'addressRegion' => 'VA',
+            'postalCode' => '23226',
+            'addressCountry' => 'US',
+        ),
+        'geo' => array(
+            '@type' => 'GeoCoordinates',
+            'latitude' => get_theme_mod('office_lat', '37.5760265'),
+            'longitude' => get_theme_mod('office_lng', '-77.5054805'),
+        ),
+        'openingHoursSpecification' => array(
+            '@type' => 'OpeningHoursSpecification',
+            'dayOfWeek' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'),
+            'opens' => '08:00',
+            'closes' => '18:00',
+        ),
+        'priceRange' => '$$',
+        'areaServed' => array(
+            array('@type' => 'City', 'name' => 'Richmond', 'containedInPlace' => array('@type' => 'AdministrativeArea', 'name' => 'Virginia')),
+            array('@type' => 'AdministrativeArea', 'name' => 'Henrico County, VA'),
+            array('@type' => 'AdministrativeArea', 'name' => 'Chesterfield County, VA'),
+            array('@type' => 'AdministrativeArea', 'name' => 'Hanover County, VA'),
+        ),
+    );
+
+    // sameAs: social + Google Business Profile.
+    $sameAs = array_filter(array(
+        get_theme_mod('facebook_url'),
+        get_option('alexander_law_gbp_public_url'),
+    ));
+    if ($sameAs) {
+        $schema['sameAs'] = array_values($sameAs);
+    }
+
+    // Real review data from synced GBP reviews.
+    if (class_exists('Alexander_Law_GBP')) {
+        $aggregate = Alexander_Law_GBP::aggregate_rating();
+        if ($aggregate) {
+            $schema['aggregateRating'] = array(
+                '@type' => 'AggregateRating',
+                'ratingValue' => $aggregate['rating'],
+                'bestRating' => '5',
+                'worstRating' => '1',
+                'ratingCount' => $aggregate['count'],
+            );
+
+            $review_nodes = array();
+            foreach (alexander_law_get_gbp_reviews(10) as $r) {
+                if (empty($r['comment']) || $r['rating'] < 4) {
+                    continue;
+                }
+                $review_nodes[] = array(
+                    '@type' => 'Review',
+                    'author' => array('@type' => 'Person', 'name' => $r['reviewer']),
+                    'reviewRating' => array(
+                        '@type' => 'Rating',
+                        'ratingValue' => $r['rating'],
+                        'bestRating' => '5',
+                    ),
+                    'reviewBody' => $r['comment'],
+                    'datePublished' => $r['create_time'],
+                );
+            }
+            if ($review_nodes) {
+                $schema['review'] = $review_nodes;
+            }
+        }
+    }
+
+    echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
 }
 add_action('wp_head', 'alexander_law_schema_data');
 
@@ -778,6 +820,9 @@ function alexander_law_get_case_results($limit = -1, $type = '') {
 require_once ALEXANDER_LAW_DIR . '/inc/template-tags.php';
 require_once ALEXANDER_LAW_DIR . '/inc/widgets.php';
 require_once ALEXANDER_LAW_DIR . '/inc/seo.php';
+require_once ALEXANDER_LAW_DIR . '/inc/google-business.php';
+require_once ALEXANDER_LAW_DIR . '/inc/admin-settings.php';
+require_once ALEXANDER_LAW_DIR . '/inc/performance.php';
 
 /**
  * Contact form handler
