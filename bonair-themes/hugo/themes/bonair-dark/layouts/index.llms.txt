@@ -1,0 +1,12 @@
+# {{ .Site.Params.journalName }}
+
+> {{ .Site.Params.description }}
+
+{{ hugo.Data.business.name }} is a digital consultancy in {{ hugo.Data.business.address.locality }}, {{ hugo.Data.business.address.region }} specializing in SEO, AEO (answer engine optimization), GEO (generative engine optimization), SaaS development, iOS apps, and AI solutions. Main site: {{ hugo.Data.business.url }}
+
+Contact: {{ hugo.Data.business.email }}
+Service area: {{ delimit hugo.Data.business.areaServed ", " }}
+
+## Journal entries
+{{ range where .Site.RegularPages "Section" "posts" }}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Description | default .Summary | plainify | truncate 160 }}{{ end }}

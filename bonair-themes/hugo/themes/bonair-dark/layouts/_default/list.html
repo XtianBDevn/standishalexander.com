@@ -1,0 +1,36 @@
+{{ define "main" }}
+<section class="front-title wrap">
+  <span class="kicker">{{ .Section | default "Archive" }}</span>
+  <h1>{{ .Title }}</h1>
+  {{ with .Description }}<p>{{ . }}</p>{{ end }}
+</section>
+
+<div class="wrap">
+  {{ $paginator := .Paginate .RegularPages }}
+  <ol class="index index--tail" style="border-top:none;">
+    {{ range $i, $p := $paginator.Pages }}
+      <li class="index-row">
+        <a href="{{ $p.Permalink }}">
+          <span class="index-row__num">{{ printf "%02d" (add $i 1) }}</span>
+          <span class="index-row__title">{{ $p.Title }}</span>
+          <span class="index-row__meta">
+            {{ with $p.Params.categories }}<span class="cat">{{ index . 0 }}</span>{{ end }}
+            {{ $p.Date.Format "Jan 2, 2006" }}
+          </span>
+        </a>
+      </li>
+    {{ else }}
+      <li style="padding:48px 0; color:var(--cream-dim); list-style:none;">Nothing here yet.</li>
+    {{ end }}
+  </ol>
+
+  {{ if gt $paginator.TotalPages 1 }}
+  <nav class="pagination">
+    {{ range $paginator.Pagers }}
+      {{ if eq . $paginator }}<span class="current">{{ .PageNumber }}</span>
+      {{ else }}<a href="{{ .URL }}">{{ .PageNumber }}</a>{{ end }}
+    {{ end }}
+  </nav>
+  {{ end }}
+</div>
+{{ end }}

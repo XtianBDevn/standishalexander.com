@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="The producer loop: bounce, notes, revise, new version, approval, master">
+  <rect width="1200" height="420" fill="#131311"/>
+  <rect x="1" y="1" width="1198" height="418" fill="none" stroke="#2c2b27" stroke-width="2"/>
+  <text x="64" y="76" font-family="Menlo, monospace" font-size="15" letter-spacing="4" fill="#6d6a62">THE PRODUCER LOOP — WHAT TALKBACK MODELS</text>
+
+  <g font-family="Menlo, monospace" font-size="15" text-anchor="middle">
+    <!-- boxes -->
+    <g>
+      <rect x="64" y="170" width="150" height="80" fill="#1a1a17" stroke="#2c2b27" stroke-width="1.5"/>
+      <text x="139" y="205" fill="#ece9e0">BOUNCE</text>
+      <text x="139" y="228" fill="#6d6a62" font-size="12">mix vN</text>
+
+      <rect x="254" y="170" width="150" height="80" fill="#1a1a17" stroke="#E94560" stroke-width="1.5"/>
+      <text x="329" y="205" fill="#E94560">NOTES</text>
+      <text x="329" y="228" fill="#6d6a62" font-size="12">timestamped</text>
+
+      <rect x="444" y="170" width="150" height="80" fill="#1a1a17" stroke="#2c2b27" stroke-width="1.5"/>
+      <text x="519" y="205" fill="#ece9e0">REVISE</text>
+      <text x="519" y="228" fill="#6d6a62" font-size="12">in the DAW</text>
+
+      <rect x="634" y="170" width="150" height="80" fill="#1a1a17" stroke="#2c2b27" stroke-width="1.5"/>
+      <text x="709" y="205" fill="#ece9e0">VERSION</text>
+      <text x="709" y="228" fill="#6d6a62" font-size="12">A/B compare</text>
+
+      <rect x="824" y="170" width="150" height="80" fill="#1a1a17" stroke="#35b5a5" stroke-width="1.5"/>
+      <text x="899" y="205" fill="#35b5a5">APPROVE</text>
+      <text x="899" y="228" fill="#6d6a62" font-size="12">sign-off chain</text>
+
+      <rect x="1014" y="170" width="122" height="80" fill="#35b5a5"/>
+      <text x="1075" y="205" fill="#131311">MASTER</text>
+      <text x="1075" y="228" fill="#0b3d37" font-size="12">stems out</text>
+    </g>
+
+    <!-- forward arrows -->
+    <g stroke="#6d6a62" stroke-width="2" fill="#6d6a62">
+      <line x1="214" y1="210" x2="246" y2="210"/><path d="M246 210 l-10 -5 v10 z"/>
+      <line x1="404" y1="210" x2="436" y2="210"/><path d="M436 210 l-10 -5 v10 z"/>
+      <line x1="594" y1="210" x2="626" y2="210"/><path d="M626 210 l-10 -5 v10 z"/>
+      <line x1="784" y1="210" x2="816" y2="210"/><path d="M816 210 l-10 -5 v10 z"/>
+      <line x1="974" y1="210" x2="1006" y2="210"/><path d="M1006 210 l-10 -5 v10 z"/>
+    </g>
+
+    <!-- loop back arrow: version -> notes -->
+    <g stroke="#E94560" stroke-width="2" fill="none">
+      <path d="M709 250 v56 h-380 v-56"/>
+    </g>
+    <path d="M329 250 l-5 10 h10 z" fill="#E94560"/>
+    <text x="519" y="330" fill="#E94560" font-size="13" letter-spacing="2">MORE NOTES? LOOP UNTIL APPROVED</text>
+  </g>
+
+  <text x="64" y="386" font-family="Menlo, monospace" font-size="13" letter-spacing="3" fill="#6d6a62">EVERY ARROW IS A FIRST-CLASS OBJECT IN THE TALKBACK DATA MODEL</text>
+</svg>

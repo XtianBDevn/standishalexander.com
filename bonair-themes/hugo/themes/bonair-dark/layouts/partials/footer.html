@@ -1,0 +1,50 @@
+{{ $b := hugo.Data.business }}
+<footer class="colophon">
+  <div class="colophon__grid">
+    <div class="colophon__brand">
+      <span class="wordmark__name">Bon Air Media</span>
+      <p>{{ $b.description }}</p>
+    </div>
+
+    <div>
+      <h3>{{ partial "icon.html" "pin" }}Visit</h3>
+      <address itemscope itemtype="https://schema.org/PostalAddress">
+        {{ with $b.address.street }}<span itemprop="streetAddress">{{ . }}</span><br>{{ end }}
+        <span itemprop="addressLocality">{{ $b.address.locality }}</span>,
+        <span itemprop="addressRegion">{{ $b.address.region }}</span>
+        <span itemprop="postalCode">{{ $b.address.postalCode }}</span>
+      </address>
+      <ul style="margin-top:10px;">
+        {{ with $b.phone }}<li><a href="tel:{{ . }}">{{ . }}</a></li>{{ end }}
+        <li><a href="mailto:{{ $b.email }}">{{ $b.email }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>{{ partial "icon.html" "clock" }}Hours</h3>
+      <ul>
+        {{ range $b.hours }}
+          <li>{{ .label }}<br>{{ .open }} – {{ .close }}</li>
+        {{ end }}
+      </ul>
+    </div>
+
+    <div>
+      <h3>{{ partial "icon.html" "compass" }}Elsewhere</h3>
+      <ul>
+        <li><a href="{{ $b.url }}">bonairmedia.com</a></li>
+        {{ with $b.googleBusinessProfile.profileUrl }}<li><a href="{{ . }}" rel="noopener">Google Business Profile</a></li>{{ end }}
+        {{ with $b.googleBusinessProfile.placeId }}<li><a href="https://search.google.com/local/writereview?placeid={{ . }}" rel="noopener">Review us on Google</a></li>{{ end }}
+        {{ range $b.sameAs }}<li><a href="{{ . }}" rel="noopener">{{ replace (replace . "https://" "") "www." "" }}</a></li>{{ end }}
+        <li><a href="{{ "index.xml" | relURL }}">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="colophon__bottom">
+    <div class="colophon__bottom-inner">
+      <span>&copy; {{ now.Year }} {{ $b.legalName | default $b.name }} · {{ $b.address.locality }}, {{ $b.address.region }}</span>
+      <span>Serving {{ delimit $b.areaServed ", " " & " }}</span>
+    </div>
+  </div>
+</footer>

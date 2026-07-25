@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Talkback mark">
+  <defs><radialGradient id="disc" cx="50%" cy="50%">
+    <stop offset="0%" stop-color="#E94560"/><stop offset="14%" stop-color="#14141F"/>
+    <stop offset="100%" stop-color="#0c0c14"/></radialGradient></defs>
+  <rect width="200" height="200" rx="44" fill="#0B0B14"/>
+  <circle cx="100" cy="100" r="72" fill="url(#disc)"/>
+  <g stroke="#23233A" stroke-width="1.5" fill="none" opacity=".8">
+    <circle cx="100" cy="100" r="62"/><circle cx="100" cy="100" r="54"/>
+    <circle cx="100" cy="100" r="46"/><circle cx="100" cy="100" r="38"/>
+  </g>
+  <circle cx="100" cy="100" r="13" fill="#0B0B14" stroke="#23233A" stroke-width="2"/>
+  <circle cx="100" cy="100" r="4.5" fill="#E94560"/>
+  <g stroke="#7EF0FF" stroke-width="5" stroke-linecap="round">
+    <line x1="100" y1="34" x2="100" y2="46"/>
+  </g>
+</svg>

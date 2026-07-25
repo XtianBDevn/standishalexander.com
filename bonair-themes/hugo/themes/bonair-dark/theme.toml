@@ -1,0 +1,8 @@
+name = "Bon Air Dark"
+license = "MIT"
+description = "Dark AI-era blog theme matching bonairmedia.com — teal/magenta gradients, glow accents, uppercase micro-labels."
+homepage = "https://www.bonairmedia.com"
+min_version = "0.112.0"
+
+[author]
+  name = "Bon Air Media"

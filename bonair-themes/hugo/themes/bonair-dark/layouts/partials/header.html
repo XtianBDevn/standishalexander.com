@@ -1,0 +1,18 @@
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="wordmark" href="{{ "/" | relURL }}">
+      <span class="wordmark__name">Bon Air Media</span>
+      <span class="wordmark__journal">Journal</span>
+    </a>
+
+    <nav class="masthead__nav" aria-label="Primary">
+      <ul>
+        {{ range .Site.Menus.main }}
+          <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+
+    <a class="masthead__cta" href="{{ .Site.Params.ctaURL }}">{{ .Site.Params.ctaLabel }} {{ partial "icon.html" "arrow-up-right" }}</a>
+  </div>
+</header>

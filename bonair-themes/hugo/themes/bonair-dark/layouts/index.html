@@ -1,0 +1,83 @@
+{{ define "main" }}
+{{ $b := hugo.Data.business }}
+<section class="front-title wrap">
+  <span class="kicker">{{ .Site.Params.kicker }}</span>
+  <h1>Notes on <em>being found</em> in the AI era.</h1>
+  <p>{{ .Site.Params.description }}</p>
+</section>
+
+{{ $posts := where .Site.RegularPages "Section" "posts" }}
+{{ $paginator := .Paginate $posts }}
+{{ $isFirstPage := eq $paginator.PageNumber 1 }}
+
+<div class="wrap">
+  {{ if and $isFirstPage (gt (len $paginator.Pages) 0) }}
+    {{ $featured := index $paginator.Pages 0 }}
+    <article class="featured">
+      <div class="featured__label"><span class="kicker kicker--dim">Latest entry</span></div>
+      <div>
+        <h2><a href="{{ $featured.Permalink }}">{{ $featured.Title }}</a></h2>
+        <p class="featured__excerpt">{{ $featured.Summary | plainify | truncate 240 }}</p>
+        <a class="featured__more" href="{{ $featured.Permalink }}">Read the entry {{ partial "icon.html" "arrow-right" }}</a>
+      </div>
+      <div class="featured__side">
+        {{ with $featured.Params.categories }}<span class="cat">{{ index . 0 }}</span>{{ end }}
+        <span>{{ $featured.Date.Format "January 2, 2006" }}</span>
+        <span>{{ $featured.ReadingTime }} min read</span>
+        {{ with $featured.Params.author }}<span>{{ . }}</span>{{ end }}
+      </div>
+    </article>
+  {{ end }}
+
+  <ol class="index index--tail">
+    {{ range $i, $p := $paginator.Pages }}
+      {{ if or (not $isFirstPage) (gt $i 0) }}
+        <li class="index-row">
+          <a href="{{ $p.Permalink }}">
+            <span class="index-row__num">{{ printf "%02d" (add $i 1) }}</span>
+            <span class="index-row__title">{{ $p.Title }}</span>
+            <span class="index-row__meta">
+              {{ with $p.Params.categories }}<span class="cat">{{ index . 0 }}</span>{{ end }}
+              {{ $p.Date.Format "Jan 2, 2006" }}
+            </span>
+          </a>
+        </li>
+      {{ end }}
+    {{ end }}
+  </ol>
+
+  {{ if gt $paginator.TotalPages 1 }}
+  <nav class="pagination">
+    {{ range $paginator.Pagers }}
+      {{ if eq . $paginator }}<span class="current">{{ .PageNumber }}</span>
+      {{ else }}<a href="{{ .URL }}">{{ .PageNumber }}</a>{{ end }}
+    {{ end }}
+  </nav>
+  {{ end }}
+</div>
+
+{{ if and $isFirstPage $b.reviews }}
+<section class="reviews">
+  <div class="wrap">
+    <div class="reviews__head">
+      <div>
+        <span class="kicker">In their words</span>
+        <h2>What clients say</h2>
+      </div>
+      {{ with $b.googleBusinessProfile.profileUrl }}
+        <a class="reviews__gbp-link" href="{{ . }}" rel="noopener">See all reviews on Google {{ partial "icon.html" "arrow-up-right" }}</a>
+      {{ end }}
+    </div>
+    <div class="reviews__grid">
+      {{ range $b.reviews }}
+        <blockquote class="review">
+          <span class="review__stars" aria-label="{{ .rating }} out of 5 stars">{{ range seq .rating }}{{ partial "icon.html" "star" }}{{ end }}</span>
+          <p class="review__text">&ldquo;{{ .text }}&rdquo;</p>
+          <footer class="review__author"><strong>{{ .author }}</strong>{{ .detail }}</footer>
+        </blockquote>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+{{ end }}
