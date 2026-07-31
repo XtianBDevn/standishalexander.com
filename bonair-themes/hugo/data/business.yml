@@ -1,0 +1,61 @@
+# Google Business Profile / local-SEO data.
+# Editable from the CMS admin under "Business Profile".
+# Feeds: LocalBusiness JSON-LD (every page), footer NAP, hours, reviews section, geo meta tags.
+
+name: "Bon Air Media"
+legalName: "Bon Air Media"
+tagline: "Digital consultancy for the AI era"
+description: "Digital consultancy specializing in SEO, AEO, GEO, SaaS development, iOS apps, and AI solutions. Built in Bon Air, Virginia for the AI-first world."
+url: "https://www.bonairmedia.com"
+email: "christian.bryantrva@outlook.com"
+phone: ""  # e.g. "+1-804-555-0100" — appears in schema + footer when set
+
+address:
+  street: ""  # optional for service-area businesses
+  locality: "Bon Air"
+  region: "VA"
+  postalCode: "23235"
+  country: "US"
+
+geo:
+  latitude: 37.5246
+  longitude: -77.5578
+
+areaServed:
+  - "Bon Air"
+  - "Richmond"
+  - "Midlothian"
+  - "Chesterfield County"
+  - "Henrico County"
+  - "Virginia"
+
+hours:
+  - days: "Mo-Fr"
+    label: "Monday – Friday"
+    open: "09:00"
+    close: "17:00"
+
+googleBusinessProfile:
+  # Paste your GBP share link (Maps profile URL)
+  profileUrl: ""
+  # Find via https://developers.google.com/maps/documentation/places/web-service/place-id
+  placeId: ""
+
+sameAs: []
+  # - "https://www.linkedin.com/company/..."
+  # - "https://github.com/..."
+
+# Pull your favorite GBP reviews in here (shown on the homepage).
+reviews:
+  - author: "Local Business Owner"
+    detail: "Restaurant & Hospitality"
+    rating: 5
+    text: "Bon Air Media didn't just optimize our website — they made us visible to AI. Our business now shows up in ChatGPT and Perplexity answers regularly."
+  - author: "Startup Founder"
+    detail: "Legal Tech"
+    rating: 5
+    text: "The combination of SEO expertise and actual software development is rare. They built us a custom SaaS tool AND ranked our content — all under one roof."
+  - author: "Marketing Director"
+    detail: "Professional Services"
+    rating: 5
+    text: "Their GEO scoring system changed how we think about content. Every page now has a citability score, and our AI referral traffic has tripled."

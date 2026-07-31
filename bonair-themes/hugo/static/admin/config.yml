@@ -1,0 +1,112 @@
+# Decap CMS — admin at /admin/
+#
+# LOCAL editing (no auth needed):  run `npx decap-server` alongside `hugo server`,
+# then open http://localhost:1313/admin/
+#
+# PRODUCTION: push this site to a GitHub repo, set backend.repo below,
+# and create a GitHub OAuth app (or use Decap's Netlify/Vercel OAuth proxy).
+backend:
+  name: github
+  repo: OWNER/bonair-journal   # ← change to your GitHub repo
+  branch: main
+
+local_backend: true
+
+media_folder: "static/uploads"
+public_folder: "/uploads"
+site_url: https://blog.bonairmedia.com
+logo_url: https://www.bonairmedia.com/favicon.ico
+
+collections:
+  # ---------- Journal entries ----------
+  - name: "posts"
+    label: "Journal Entries"
+    label_singular: "Entry"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Draft", name: "draft", widget: "boolean", default: true, hint: "Drafts never publish to the live site." }
+      - label: "Categories"
+        name: "categories"
+        widget: "select"
+        multiple: true
+        options: ["SEO", "AEO", "GEO", "SaaS", "iOS", "AI", "Local", "Tutorials"]
+        hint: "First category becomes the label shown on the journal index."
+      - { label: "Author", name: "author", widget: "string", default: "Bon Air Media" }
+      - { label: "Lead Image", name: "image", widget: "image", required: false }
+      - label: "Meta Description (SEO)"
+        name: "description"
+        widget: "text"
+        required: false
+        hint: "~155 characters. Used for search snippets, Open Graph, and AI answer engines."
+      - label: "FAQ (AEO)"
+        name: "faq"
+        widget: "list"
+        required: false
+        hint: "Rendered as a Frequently Asked section AND emitted as FAQPage schema so answer engines can cite you."
+        fields:
+          - { label: "Question", name: "q", widget: "string" }
+          - { label: "Answer", name: "a", widget: "text" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  # ---------- Business settings ----------
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "business"
+        label: "Business Profile (Google / Local SEO)"
+        file: "data/business.yml"
+        fields:
+          - { label: "Business Name", name: "name", widget: "string" }
+          - { label: "Legal Name", name: "legalName", widget: "string", required: false }
+          - { label: "Tagline", name: "tagline", widget: "string", required: false }
+          - { label: "Description", name: "description", widget: "text", hint: "Used in footer, LocalBusiness schema, and llms.txt." }
+          - { label: "Main Website URL", name: "url", widget: "string" }
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Phone", name: "phone", widget: "string", required: false, hint: "E.164 format, e.g. +1-804-555-0100. Must match your Google Business Profile exactly (NAP consistency)." }
+          - label: "Address"
+            name: "address"
+            widget: "object"
+            hint: "Must match your Google Business Profile exactly."
+            fields:
+              - { label: "Street (optional for service-area businesses)", name: "street", widget: "string", required: false }
+              - { label: "City / Locality", name: "locality", widget: "string" }
+              - { label: "State / Region", name: "region", widget: "string" }
+              - { label: "Postal Code", name: "postalCode", widget: "string" }
+              - { label: "Country", name: "country", widget: "string", default: "US" }
+          - label: "Map Coordinates"
+            name: "geo"
+            widget: "object"
+            fields:
+              - { label: "Latitude", name: "latitude", widget: "number", value_type: "float" }
+              - { label: "Longitude", name: "longitude", widget: "number", value_type: "float" }
+          - { label: "Service Areas", name: "areaServed", widget: "list", hint: "Cities/counties you serve — feeds areaServed schema and the footer." }
+          - label: "Opening Hours"
+            name: "hours"
+            widget: "list"
+            fields:
+              - { label: "Days (schema format, e.g. Mo-Fr)", name: "days", widget: "string" }
+              - { label: "Label (shown in footer)", name: "label", widget: "string" }
+              - { label: "Opens (HH:MM)", name: "open", widget: "string" }
+              - { label: "Closes (HH:MM)", name: "close", widget: "string" }
+          - label: "Google Business Profile"
+            name: "googleBusinessProfile"
+            widget: "object"
+            fields:
+              - { label: "Profile URL (Maps share link)", name: "profileUrl", widget: "string", required: false }
+              - { label: "Place ID", name: "placeId", widget: "string", required: false, hint: "Enables the 'Review us on Google' link. Find yours: developers.google.com/maps/documentation/places/web-service/place-id" }
+          - { label: "Other Profiles (sameAs)", name: "sameAs", widget: "list", required: false, hint: "LinkedIn, GitHub, etc. Strengthens entity identity for GEO." }
+          - label: "Featured Google Reviews"
+            name: "reviews"
+            widget: "list"
+            required: false
+            hint: "Copy your favorite GBP reviews here — shown on the journal homepage."
+            fields:
+              - { label: "Reviewer", name: "author", widget: "string" }
+              - { label: "Detail (industry, role…)", name: "detail", widget: "string", required: false }
+              - { label: "Rating (1–5)", name: "rating", widget: "number", value_type: "int", min: 1, max: 5, default: 5 }
+              - { label: "Review Text", name: "text", widget: "text" }

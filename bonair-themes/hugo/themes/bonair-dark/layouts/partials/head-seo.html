@@ -1,0 +1,111 @@
+{{- $b := hugo.Data.business -}}
+{{- $desc := .Description | default .Params.description | default .Summary | default .Site.Params.description | plainify | truncate 158 -}}
+<title>{{ if not .IsHome }}{{ .Title }} — {{ end }}{{ .Site.Title }}{{ if .IsHome }} · {{ .Site.Params.journalName }}{{ end }}</title>
+<meta name="description" content="{{ $desc }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+
+{{/* --- Localized SEO: geo meta --- */}}
+<meta name="geo.region" content="US-{{ $b.address.region }}">
+<meta name="geo.placename" content="{{ $b.address.locality }}, {{ $b.address.region }}">
+<meta name="geo.position" content="{{ $b.geo.latitude }};{{ $b.geo.longitude }}">
+<meta name="ICBM" content="{{ $b.geo.latitude }}, {{ $b.geo.longitude }}">
+
+{{/* --- Open Graph / Twitter --- */}}
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:locale" content="en_US">
+{{ with .Params.image }}<meta property="og:image" content="{{ . | absURL }}">{{ end }}
+{{ if .IsPage }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{ range .Params.categories }}<meta property="article:tag" content="{{ . }}">{{ end }}
+{{ end }}
+<meta name="twitter:card" content="{{ if .Params.image }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ .Title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+
+{{/* --- LocalBusiness (every page): local SEO + GBP entity anchor --- */}}
+{{- $sameAs := slice -}}
+{{- with $b.googleBusinessProfile.profileUrl }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- range $b.sameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- $business := dict
+  "@type" "ProfessionalService"
+  "@id" (printf "%s#business" $b.url)
+  "name" $b.name
+  "description" $b.description
+  "url" $b.url
+  "email" $b.email
+  "address" (dict
+    "@type" "PostalAddress"
+    "streetAddress" $b.address.street
+    "addressLocality" $b.address.locality
+    "addressRegion" $b.address.region
+    "postalCode" $b.address.postalCode
+    "addressCountry" $b.address.country)
+  "geo" (dict "@type" "GeoCoordinates" "latitude" $b.geo.latitude "longitude" $b.geo.longitude)
+  "areaServed" $b.areaServed
+-}}
+{{- with $b.phone }}{{ $business = merge $business (dict "telephone" .) }}{{ end -}}
+{{- with $sameAs }}{{ $business = merge $business (dict "sameAs" .) }}{{ end -}}
+{{- with $b.hours -}}
+  {{- $spec := slice -}}
+  {{- range . -}}
+    {{- $spec = $spec | append (dict "@type" "OpeningHoursSpecification" "dayOfWeek" (split .days "-") "opens" .open "closes" .close) -}}
+  {{- end -}}
+  {{- $business = merge $business (dict "openingHoursSpecification" $spec) -}}
+{{- end -}}
+<script type="application/ld+json">{{ (dict "@context" "https://schema.org") | merge $business | jsonify | safeJS }}</script>
+
+{{/* --- WebSite (home) --- */}}
+{{ if .IsHome }}
+<script type="application/ld+json">{{ dict
+  "@context" "https://schema.org"
+  "@type" "WebSite"
+  "name" .Site.Params.journalName
+  "url" .Site.BaseURL
+  "description" .Site.Params.description
+  "publisher" (dict "@id" (printf "%s#business" $b.url))
+  | jsonify | safeJS }}</script>
+{{ end }}
+
+{{/* --- BlogPosting + speakable (AEO) on articles --- */}}
+{{ if and .IsPage (eq .Section "posts") }}
+{{- $post := dict
+  "@context" "https://schema.org"
+  "@type" "BlogPosting"
+  "headline" .Title
+  "description" $desc
+  "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+  "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+  "wordCount" .WordCount
+  "author" (dict "@type" "Organization" "name" $b.name "url" $b.url)
+  "publisher" (dict "@id" (printf "%s#business" $b.url))
+  "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+  "speakable" (dict "@type" "SpeakableSpecification" "cssSelector" (slice "h1" ".article-body > p:first-of-type"))
+-}}
+{{- with .Params.categories }}{{ $post = merge $post (dict "keywords" (delimit . ", ")) }}{{ end -}}
+{{- with .Params.image }}{{ $post = merge $post (dict "image" (. | absURL)) }}{{ end -}}
+<script type="application/ld+json">{{ $post | jsonify | safeJS }}</script>
+
+{{/* Breadcrumbs */}}
+<script type="application/ld+json">{{ dict
+  "@context" "https://schema.org"
+  "@type" "BreadcrumbList"
+  "itemListElement" (slice
+    (dict "@type" "ListItem" "position" 1 "name" "Journal" "item" .Site.BaseURL)
+    (dict "@type" "ListItem" "position" 2 "name" .Title "item" .Permalink))
+  | jsonify | safeJS }}</script>
+
+{{/* FAQPage (AEO) from front matter */}}
+{{ with .Params.faq }}
+{{- $qa := slice -}}
+{{- range . -}}
+  {{- $qa = $qa | append (dict "@type" "Question" "name" .q "acceptedAnswer" (dict "@type" "Answer" "text" .a)) -}}
+{{- end -}}
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "FAQPage" "mainEntity" $qa | jsonify | safeJS }}</script>
+{{ end }}
+{{ end }}

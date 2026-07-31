@@ -1,0 +1,49 @@
+baseURL = "https://blog.bonairmedia.com/"
+locale = "en-us"
+title = "Bon Air Media"
+theme = "bonair-dark"
+enableRobotsTXT = true
+
+[pagination]
+  pagerSize = 10
+
+[params]
+  # "dark" (default), "light" (warm paper), or "auto" (follows the visitor's OS setting)
+  palette = "dark"
+  journalName = "The Bon Air Journal"
+  description = "Field notes on search, answer engines, generative AI, and building software — written from Bon Air, Virginia."
+  author = "Bon Air Media"
+  kicker = "Field notes from Bon Air, Virginia"
+  ctaLabel = "Work with us"
+  ctaURL = "https://www.bonairmedia.com/#contact"
+
+[[menus.main]]
+  name = "Journal"
+  url = "/"
+  weight = 10
+
+[[menus.main]]
+  name = "Services"
+  url = "https://www.bonairmedia.com/#services"
+  weight = 20
+
+[[menus.main]]
+  name = "About"
+  url = "https://www.bonairmedia.com/#about"
+  weight = 30
+
+[[menus.main]]
+  name = "Contact"
+  url = "https://www.bonairmedia.com/#contact"
+  weight = 40
+
+[outputFormats.llms]
+  mediaType = "text/plain"
+  baseName = "llms"
+  isPlainText = true
+
+[outputs]
+  home = ["HTML", "RSS", "llms"]
+
+[markup.goldmark.renderer]
+  unsafe = true
